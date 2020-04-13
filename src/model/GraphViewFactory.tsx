@@ -3,8 +3,10 @@ import EdgeView from './EdgeView'
 
 import * as d3scaleChromatic from 'd3-scale-chromatic'
 import * as d3color from 'd3-color'
+import * as d3scale from 'd3-scale'
 
 const tableau10 = d3scaleChromatic.schemeTableau10
+
 
 const getRandomInt = (max: number) => {
   max = Math.floor(max)
@@ -16,7 +18,16 @@ const getColor = () => {
   const color = d3color.color(cHex)
   const c: [number, number, number] = [color.r, color.g, color.b]
   return c
-}  
+}
+
+const getEdgeColor = (score, mapper) => {
+  const cHex = mapper(score)
+  const color = d3color.color(cHex)
+  const c: [number, number, number] = [color.r, color.g, color.b, 50]
+  return c
+}
+
+
 const createNodeViews = (nodeData: []) => {
   let nodeCount: number = nodeData.length
 
@@ -26,12 +37,13 @@ const createNodeViews = (nodeData: []) => {
     const node = nodeData[nodeCount]
 
     const {position, data} = node
-    const {id} = data
+    const {id, name} = data
 
     const nv: NodeView = {
+      id,
+      label: name,
       position,
-      color: getColor(),
-      shape: 'circle',
+      color: [255, 255, 255, 160],
       size: 5
     }
 
@@ -45,23 +57,39 @@ const createEdgeViews = (edges: []) => {
   let edgeCount: number = edges.length
   const edgeViewMap: Map<string, EdgeView> = new Map()
 
-  while (edgeCount--) {
-    if (edgeCount % 2 === 0) {
-      const edge = edges[edgeCount]
+  let min = Number.POSITIVE_INFINITY
+  let max = Number.NEGATIVE_INFINITY
 
-      const {data} = edge
-      const {id, source, target} = data
-
-      const ev: EdgeView = {
-        color: [1, 0, 200],
-        width: 1,
-        opacity: 1,
-        source,
-        target
-      }
-
-      edgeViewMap.set(id, ev)
+  while(edgeCount--) {
+    const edge = edges[edgeCount]
+    const score = edge.data.combined_score
+    if(score < min) {
+      min = score
     }
+
+    if(score > max) {
+      max = score
+    }
+  }
+
+  console.log('MINMAX = ', min, max)
+  const mapper = d3scale.scaleSequential(d3scaleChromatic.interpolateCividis).domain([min, max])
+  edgeCount = edges.length
+
+  while (edgeCount--) {
+    const edge = edges[edgeCount]
+
+    const {data} = edge
+    const {id, source, target} = data
+
+    const ev: EdgeView = {
+      color: getEdgeColor(data.combined_score, mapper),
+      width: 6,
+      source,
+      target
+    }
+
+    edgeViewMap.set(id, ev)
   }
 
   return edgeViewMap
