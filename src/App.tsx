@@ -23,6 +23,7 @@ const initializeData = () => {
 }
 
 const App: React.FC = () => {
+  const [render3d, setRender3d] = useState(false)
   const emptyMap = new Map()
   const [data, setData] = useState({nodeViews: emptyMap, edgeViews: emptyMap})
   const [error, setError] = useState({})
@@ -51,8 +52,8 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <ControlPanel selectedNode={selectedNode} />
-      <GraphRenderer data={data} setSelectedNode={setSelectedNode} />
+      <ControlPanel selectedNode={selectedNode} setRender3d={setRender3d} />
+      <GraphRenderer data={data} setSelectedNode={setSelectedNode} render3d={render3d} />
     </div>
   )
 }

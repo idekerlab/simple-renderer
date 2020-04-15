@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import DeckGL from '@deck.gl/react'
-import {OrthographicView} from '@deck.gl/core'
+import {OrthographicView, OrbitView} from '@deck.gl/core'
 import {ScatterplotLayer, LineLayer} from '@deck.gl/layers'
 import GraphLayer from '../../Layers/GraphLayer'
 
 const baseStyle = {
-  backgroundColor: '#000000',
+  backgroundColor: '#222222',
   position: 'relative'
 }
 
@@ -16,18 +16,19 @@ const INITIAL_VIEW_STATE = {
   maxZoom: 10
 }
 
-const view = new OrthographicView()
 
 type RendererProps = {
   setSelectedNode: Function,
-  data: object  
+  data: object,
+  render3d: boolean
 }
 
 /**
  * Base Deck layer
  */
 const GraphRenderer = (props:RendererProps) => {
-  const {setSelectedNode, data} = props
+  const {setSelectedNode, data, render3d} = props
+  
 
   // UI states
   const [showEdges, setShowEdges] = useState(true)
@@ -43,7 +44,7 @@ const GraphRenderer = (props:RendererProps) => {
         if (showEdges !== false) {
           setShowEdges(true)
         }
-      }, 500)
+      }, 300)
     } else {
     }
   }
@@ -53,7 +54,11 @@ const GraphRenderer = (props:RendererProps) => {
     return <div />
   }
 
-  const layers = [new GraphLayer({data, setSelectedNode, showEdges})]
+  const layers = [new GraphLayer({data, setSelectedNode, showEdges, render3d})]
+  let view = new OrthographicView()
+  if(render3d) {
+    view = new OrbitView()
+  }
 
   return (
     <DeckGL

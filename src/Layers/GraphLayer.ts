@@ -1,5 +1,5 @@
 import {CompositeLayer} from '@deck.gl/core'
-import {ScatterplotLayer, LineLayer} from '@deck.gl/layers'
+import {ScatterplotLayer, LineLayer, ArcLayer} from '@deck.gl/layers'
 
 import {createNodeLayer} from './NodeLayer'
 
@@ -29,33 +29,56 @@ class GraphLayer extends CompositeLayer {
   }
 
   renderLayers() {
-    const {data, showEdges} = this.props
+    const {data, showEdges, render3d} = this.props
     const {nodeViews, edgeViews} = data
 
     const t0 = performance.now()
 
     const nodeLayer = createNodeLayer(nodeViews)
     const eLayers = getLayers(edgeViews)
+    
+    const edgeLayer = getEdgeLayer(eLayers[0], nodeViews, render3d, showEdges)
 
-    const edgeLayer = new LineLayer({
-      id: `edge-layer`,
-      data: eLayers[0],
-      getSourcePosition: (e) => {
-        const source = nodeViews.get(e.source)
-        return [source.position.x, source.position.y]
-      },
-      getTargetPosition: (e) => {
-        const target = nodeViews.get(e.target)
-        return [target.position.x, target.position.y]
-      },
-      getColor: (e) => e.color,
-      strokeWidth: 1,
-      visible: showEdges,
-      pickable: true,
-      widthScale: 2,
-      autoHighlight: true,
-      highlightColor: [255, 0, 0]
-    })
+    // const edgeLayer = new LineLayer({
+    //   id: `edge-layer`,
+    //   data: eLayers[0],
+    //   getSourcePosition: (e) => {
+    //     const source = nodeViews.get(e.source)
+    //     return [source.position.x, source.position.y]
+    //   },
+    //   getTargetPosition: (e) => {
+    //     const target = nodeViews.get(e.target)
+    //     return [target.position.x, target.position.y]
+    //   },
+    //   getColor: (e) => e.color,
+    //   strokeWidth: 1,
+    //   visible: showEdges,
+    //   pickable: true,
+    //   widthScale: 1,
+    //   autoHighlight: true,
+    //   highlightColor: [255, 0, 0]
+    // })
+
+    // const edgeLayer = new ArcLayer({
+    //   id: `edge-layer`,
+    //   data: eLayers[0],
+    //   getSourcePosition: (e) => {
+    //     const source = nodeViews.get(e.source)
+    //     return [source.position.x, source.position.y]
+    //   },
+    //   getTargetPosition: (e) => {
+    //     const target = nodeViews.get(e.target)
+    //     return [target.position.x, target.position.y]
+    //   },
+    //   getSourceColor: (e) => e.color,
+    //   getTargetColor: (e) => e.color,
+    //   strokeWidth: 1,
+    //   visible: showEdges,
+    //   pickable: true,
+    //   widthScale: 1,
+    //   autoHighlight: true,
+    //   highlightColor: [255, 0, 0]
+    // })
 
     // const edgeLayerSub = new LineLayer({
     //   id: `link-layer2`,
@@ -77,6 +100,54 @@ class GraphLayer extends CompositeLayer {
     console.log('Graph Layer created.  E count = ', edgeViews.size, performance.now() - t0)
     return [edgeLayer, nodeLayer]
   }
+}
+
+const getEdgeLayer = (edgeLayer, nodeViews, render3d: boolean, showEdges: boolean) => {
+
+  if(render3d) {
+    return new ArcLayer({
+      id: `edge-layer-3d`,
+      data: edgeLayer,
+      getSourcePosition: (e) => {
+        const source = nodeViews.get(e.source)
+        return [source.position.x, source.position.y]
+      },
+      getTargetPosition: (e) => {
+        const target = nodeViews.get(e.target)
+        return [target.position.x, target.position.y]
+      },
+      getSourceColor: (e) => e.color,
+      getTargetColor: (e) => e.color,
+      strokeWidth: 1,
+      visible: showEdges,
+      pickable: true,
+      widthScale: 1,
+      autoHighlight: true,
+      highlightColor: [255, 0, 0]
+    })
+
+  } else {
+    return new LineLayer({
+      id: `edge-layer`,
+      data: edgeLayer,
+      getSourcePosition: (e) => {
+        const source = nodeViews.get(e.source)
+        return [source.position.x, source.position.y]
+      },
+      getTargetPosition: (e) => {
+        const target = nodeViews.get(e.target)
+        return [target.position.x, target.position.y]
+      },
+      getColor: (e) => e.color,
+      strokeWidth: 1,
+      visible: showEdges,
+      pickable: true,
+      widthScale: 2,
+      autoHighlight: true,
+      highlightColor: [255, 0, 0]
+    })
+  }
+
 }
 
 const getLayers = (edgeViews) => {

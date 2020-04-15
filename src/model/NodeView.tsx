@@ -3,7 +3,7 @@ import Position from './Position'
 type NodeView = {
     id: string,
     label?: string,
-    position: Position,
+    position: [number, number, number?],
     color: [number, number, number],
     size: number
 }

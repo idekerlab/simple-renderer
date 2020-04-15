@@ -11,6 +11,8 @@ import Avatar from '@material-ui/core/Avatar'
 
 import NodeView from '../../model/NodeView'
 
+import RenderingSwitch from './RenderingSwitch'
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '40%',
       maxWidth: '20em',
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'column'
     },
     title: {
       padding: '1em'
@@ -26,49 +28,51 @@ const useStyles = makeStyles((theme: Theme) =>
     list: {
       paddingTop: '1em',
       width: '100%',
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.paper
     },
+    node: {
+      backgroundColor: 'red'
+    }
   })
 )
 
 type ControlProps = {
-  selectedNode?: NodeView
+  selectedNode?: NodeView,
+  setRender3d: Function
 }
 
 const ControlPanel = (props: ControlProps) => {
   const classes = useStyles()
 
-  const {label, id} = props.selectedNode
+  const {label, id, source, target} = props.selectedNode
+
+  const {setRender3d} = props
 
   console.log('props.', props.selectedNode)
   return (
     <div className={classes.root}>
-      <Typography className={classes.title} variant="h6">Large Graph Renderer Demo</Typography>
+      <Typography className={classes.title} variant="h6">
+        Large Graph Renderer Demo
+      </Typography>
 
       <Divider />
 
-      <Typography variant="body2" color="textSecondary" align="center">
-        Selected Node: {props.selectedNode.color}
-      </Typography>
-
       <List className={classes.list}>
-      <ListItem>
-        <ListItemAvatar>
-          <Avatar>
-            N
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary={label} secondary={`ID: ${id}`} />
-      </ListItem>
-      <ListItem>
-        <ListItemAvatar>
-          <Avatar>
-            E
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Edge" secondary={`Label`} />
-      </ListItem>
-    </List>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar className={classes.node}>N</Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={label} secondary={`ID: ${id}`} />
+        </ListItem>
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar>E</Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="Edge" secondary={`Source: ${source} Target: ${target}`} />
+        </ListItem>
+      </List>
+      <Divider />
+      <RenderingSwitch setRender3d={setRender3d} />
     </div>
   )
 }
