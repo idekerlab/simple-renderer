@@ -37,14 +37,23 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type ControlProps = {
-  selectedNode?: NodeView,
+  selectedNode?: NodeView
   setRender3d: Function
 }
 
 const ControlPanel = (props: ControlProps) => {
   const classes = useStyles()
 
-  const {label, id, source, target} = props.selectedNode
+  if (props.selectedNode === undefined) {
+    return (
+      <div className={classes.root}>
+        <Typography className={classes.title} variant="h6">
+          Large Graph Renderer Demo
+        </Typography>
+      </div>
+    )
+  }
+  const {label, id} = props.selectedNode
 
   const {setRender3d} = props
 
@@ -68,7 +77,7 @@ const ControlPanel = (props: ControlProps) => {
           <ListItemAvatar>
             <Avatar>E</Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Edge" secondary={`Source: ${source} Target: ${target}`} />
+          {/* <ListItemText primary="Edge" secondary={`Source: ${source} Target: ${target}`} /> */}
         </ListItem>
       </List>
       <Divider />

@@ -3,9 +3,13 @@ import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 
-const RenderingSwitch = (props) => {
+type RenderingProps = {
+  setRender3d: Function
+}
 
-    const {setRender3d} = props 
+const RenderingSwitch = (props: RenderingProps) => {
+  
+  const {setRender3d} = props
   const [state, setState] = React.useState({
     checkedA: false
   })

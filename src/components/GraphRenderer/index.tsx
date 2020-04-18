@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import DeckGL from '@deck.gl/react'
 import {OrthographicView, OrbitView} from '@deck.gl/core'
-import {ScatterplotLayer, LineLayer} from '@deck.gl/layers'
 import GraphLayer from '../../Layers/GraphLayer'
+import GraphView from '../../model/GraphView'
 
 const baseStyle = {
   backgroundColor: '#222222',
@@ -11,24 +11,22 @@ const baseStyle = {
 
 const INITIAL_VIEW_STATE = {
   target: [0, 0, 0],
-  zoom: 0,
+  zoom: -4,
   minZoom: -10,
   maxZoom: 10
 }
 
-
 type RendererProps = {
   setSelectedNode: Function,
-  data: object,
+  graphView: GraphView| null,
   render3d: boolean
 }
 
 /**
- * Base Deck layer
+ * Base component for large graph rendering using Deck.gl
  */
 const GraphRenderer = (props:RendererProps) => {
-  const {setSelectedNode, data, render3d} = props
-  
+  const {setSelectedNode, graphView, render3d} = props
 
   // UI states
   const [showEdges, setShowEdges] = useState(true)
@@ -49,12 +47,9 @@ const GraphRenderer = (props:RendererProps) => {
     }
   }
 
-  // Return empty page if data is not available.
-  if (data.nodeViews.size === 0) {
-    return <div />
-  }
 
-  const layers = [new GraphLayer({data, setSelectedNode, showEdges, render3d})]
+  const layerProps = {graphView, setSelectedNode, showEdges, render3d}
+  const layers = [new GraphLayer(layerProps)]
   let view = new OrthographicView()
   if(render3d) {
     view = new OrbitView()
