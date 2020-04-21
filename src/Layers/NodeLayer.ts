@@ -12,7 +12,10 @@ const createNodeLayer = (nodeViewMap: Map<string, NodeView>) => {
     getRadius: (d) => d.size,
     pickable: true,
     autoHighlight: true,
-    highlightColor: [255, 0, 0]
+    highlightColor: [255, 0, 0],
+    radiusScale: 0.1,
+    radiusMinPixels: 1,
+    radiusMaxPixels: 100,
   })
 }
 

@@ -9,6 +9,7 @@ const baseStyle = {
   position: 'relative'
 }
 
+const MAIN_VIEW_ID = 'deck-main-view'
 const INITIAL_VIEW_STATE = {
   target: [0, 0, 0],
   zoom: -4,
@@ -30,11 +31,25 @@ const GraphRenderer = (props:RendererProps) => {
 
   // UI states
   const [showEdges, setShowEdges] = useState(true)
+  const [showLabels, setShowLabels] = useState(false)
 
   const _handleViewStateChange = (state) => {
     const {viewState, interactionState} = state
     const {zoom} = viewState
     const {isZooming} = interactionState
+
+    console.log('Zoom level = ', zoom)
+    if(zoom>1) {
+      setShowLabels(true)
+    } else {
+      setTimeout(() => {
+        if (showLabels) {
+          setShowLabels(false)
+        }
+      }, 100)
+
+
+    }
 
     if (isZooming) {
       setShowEdges(false)
@@ -48,7 +63,7 @@ const GraphRenderer = (props:RendererProps) => {
   }
 
 
-  const layerProps = {graphView, setSelectedNode, showEdges, render3d}
+  const layerProps = {graphView, setSelectedNode, showEdges, showLabels, render3d}
   const layers = [new GraphLayer(layerProps)]
   let view = new OrthographicView()
   if(render3d) {

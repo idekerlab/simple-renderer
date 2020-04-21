@@ -1,15 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import './App.css'
 import GraphRenderer from './components/GraphRenderer'
-import {createNodeViews, createEdgeViews} from './model/GraphViewFactory'
-// import * as sampleGraph from './sample-data/small.json'
 import ControlPanel from './components/ControlPanel'
 import NodeView from './model/NodeView'
-import GraphLayer from './Layers/GraphLayer'
 import GraphView from './model/GraphView'
 import EdgeView from './model/EdgeView'
-import CyNode from './model/CyNode'
-import CyEdge from './model/CyEdge'
 
 import * as cxVizConverter from 'cxVizConverter'
 
@@ -22,38 +17,13 @@ const PRESETS = {
   LARGE: 'f00fa512-7dd3-11ea-8503-525400c25d22'
 }
 
-const dataUrl = BASE_URL + PRESETS.MEDIUM
-
-type Elements = {
-  nodes: CyNode[]
-  edges: CyEdge[]
-}
-type Cyjs = {
-  data: object
-  elements: Elements
-}
+const dataUrl = BASE_URL + PRESETS.LARGE
 
 const DEF_NODEVIEW: NodeView = {
   id: 'default',
   position: [0, 0, 0]
 }
 
-// const initializeData = (cyjs: Cyjs) => {
-//   const t0 = performance.now()
-
-//   const cyjsElements = cyjs.elements
-//   // const cyjsElements = sampleGraph.default.elements
-
-//   const nodes: CyNode[] = cyjsElements.nodes
-//   const edges: CyEdge[] = cyjsElements.edges
-
-//   // Convert to view models
-//   const nodeViews = createNodeViews(nodes)
-//   const edgeViews = createEdgeViews(edges)
-
-//   console.log('* Data created', performance.now() - t0)
-//   return {nodeViews, edgeViews}
-// }
 
 const emptyNodes = new Map<string, NodeView>()
 const emptyEdges = new Map<string, EdgeView>()
@@ -76,11 +46,7 @@ const App: React.FC = () => {
       .json()
       .then((cx) => {
         const result = cxVizConverter.convert(cx, 'lnv')
-        console.log('VC result', result)
-
         const gv = GraphViewFactory.createGraphView(result.nodeViews, result.edgeViews)
-        console.log('GV:::', gv)
-        console.log('Time:: --------------', performance.now() - t0)
         setData(gv)
       })
       .catch((err) => {

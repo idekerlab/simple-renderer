@@ -5,6 +5,7 @@ import {createNodeLayer} from './NodeLayer'
 import GraphView from '../model/GraphView'
 
 import {createEdgeLayer} from './EdgeLayer'
+import { createLabelLayer } from './LabelLayer'
 
 const HIGHLIGHT_COLOR = [255, 0, 0, 255]
 
@@ -30,16 +31,19 @@ class GraphLayer extends CompositeLayer {
   }
 
   renderLayers() {
-    const {graphView, showEdges, render3d} = this.props
+    const {graphView, showEdges, showLabels, render3d} = this.props
     const {nodeViews, edgeViews} = graphView
 
     const t0 = performance.now()
+    
     const nodeLayer = createNodeLayer(nodeViews)
+    const nodeLabelLayer = createLabelLayer(nodeViews, showLabels)
+    
     const eLayers = getLayers(edgeViews)
     const edgeLayer = createEdgeLayer(eLayers[0], nodeViews, render3d, showEdges)
 
     console.log('Graph Layer created.  E count = ', edgeViews.size, performance.now() - t0)
-    return [edgeLayer, nodeLayer]
+    return [edgeLayer, nodeLayer, nodeLabelLayer]
   }
 }
 
