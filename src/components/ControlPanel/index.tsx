@@ -12,6 +12,9 @@ import Avatar from '@material-ui/core/Avatar'
 import NodeView from '../../model/NodeView'
 
 import RenderingSwitch from './RenderingSwitch'
+import ExampleSelector from './ExampleSelector'
+
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type ControlProps = {
   selectedNode?: NodeView
-  setRender3d: Function
+  setRender3d: Function,
+  selectedNetwork: string,
+  setSelectedNetwork: Function
 }
 
 const ControlPanel = (props: ControlProps) => {
@@ -80,6 +85,8 @@ const ControlPanel = (props: ControlProps) => {
           {/* <ListItemText primary="Edge" secondary={`Source: ${source} Target: ${target}`} /> */}
         </ListItem>
       </List>
+      <Divider />
+      <ExampleSelector {...props}/>
       <Divider />
       <RenderingSwitch setRender3d={setRender3d} />
     </div>

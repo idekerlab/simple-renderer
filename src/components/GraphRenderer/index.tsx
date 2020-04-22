@@ -12,21 +12,21 @@ const baseStyle = {
 const MAIN_VIEW_ID = 'deck-main-view'
 const INITIAL_VIEW_STATE = {
   target: [0, 0, 0],
-  zoom: -4,
+  zoom: 0,
   minZoom: -10,
   maxZoom: 10
 }
 
 type RendererProps = {
-  setSelectedNode: Function,
-  graphView: GraphView| null,
+  setSelectedNode: Function
+  graphView: GraphView | null
   render3d: boolean
 }
 
 /**
  * Base component for large graph rendering using Deck.gl
  */
-const GraphRenderer = (props:RendererProps) => {
+const GraphRenderer = (props: RendererProps) => {
   const {setSelectedNode, graphView, render3d} = props
 
   // UI states
@@ -39,7 +39,8 @@ const GraphRenderer = (props:RendererProps) => {
     const {isZooming} = interactionState
 
     console.log('Zoom level = ', zoom)
-    if(zoom>1) {
+    console.log('Full state = ', state)
+    if (zoom > 1) {
       setShowLabels(true)
     } else {
       setTimeout(() => {
@@ -47,8 +48,6 @@ const GraphRenderer = (props:RendererProps) => {
           setShowLabels(false)
         }
       }, 100)
-
-
     }
 
     if (isZooming) {
@@ -62,12 +61,28 @@ const GraphRenderer = (props:RendererProps) => {
     }
   }
 
-
   const layerProps = {graphView, setSelectedNode, showEdges, showLabels, render3d}
   const layers = [new GraphLayer(layerProps)]
   let view = new OrthographicView()
-  if(render3d) {
+  if (render3d) {
     view = new OrbitView()
+  }
+
+  const _handleClick = (layer, object) => {
+    console.log('CLICK 2::', layer, object)
+
+    // Fit content
+
+    // const {viewport} = view.makeViewport({'100%', '100%', viewState})
+    // if (layer) {
+    //   const {longitude, latitude, zoom} = viewport.fitBounds([
+    //     [object.minLng, object.minLat],
+    //     [object.maxLng, object.maxLat]
+    //   ])
+    //   // Zoom to the object
+    //   // deck.setProps({
+    //   //   viewState: {longitude, latitude, zoom}
+    // }
   }
 
   return (
@@ -87,6 +102,9 @@ const GraphRenderer = (props:RendererProps) => {
       }}
       onViewStateChange={(state) => {
         _handleViewStateChange(state)
+      }}
+      onClick={(layer, object) => {
+        _handleClick(layer, object)
       }}
     />
   )
