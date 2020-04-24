@@ -12,14 +12,8 @@ import GraphViewFactory from './model/GraphViewFactory'
 // For deployment
 const BASE_URL = 'http://dev.ndexbio.org/v3/network/'
 
-const DEF_NODEVIEW: NodeView = {
-  id: 'default',
-  position: [0, 0, 0]
-}
-
 const emptyNodes = new Map<string, NodeView>()
 const emptyEdges = new Map<string, EdgeView>()
-
 
 const DEF_SUID = 'e065fc7d-7823-11ea-8057-525400c25d22'
 
@@ -28,7 +22,9 @@ const App: React.FC = () => {
   const [render3d, setRender3d] = useState(false)
   const [data, setData] = useState<GraphView | null>(null)
   const [error, setError] = useState({})
-  const [selectedNode, setSelectedNode] = useState(DEF_NODEVIEW)
+  const [loading, setLoading] = useState(false)
+  const [selectedNode, setSelectedNode] = useState()
+  const [selectedEdge, setSelectedEdge] = useState()
 
   console.log('* New UUID:', selectedNetwork)
 
@@ -36,6 +32,7 @@ const App: React.FC = () => {
 
   async function fetchData() {
     const t0 = performance.now()
+    setLoading(true)
     const response = await fetch(dataUrl)
     response
       .json()
@@ -43,10 +40,12 @@ const App: React.FC = () => {
         const result = cxVizConverter.convert(cx, 'lnv')
         const gv = GraphViewFactory.createGraphView(result.nodeViews, result.edgeViews)
         setData(gv)
+        setLoading(false)
       })
       .catch((err) => {
         console.log('* Data fetch error:', err)
         setError(err)
+        setLoading(false)
       })
   }
 
@@ -54,22 +53,29 @@ const App: React.FC = () => {
     fetchData()
   }, [])
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchData()
   }, [selectedNetwork])
 
-
-  return !data ? (
-    <div className="App">Loading Graph......</div>
-  ) : (
+  return (
     <div className="App">
       <ControlPanel
         selectedNode={selectedNode}
+        selectedEdge={selectedEdge}
         setRender3d={setRender3d}
         selectedNetwork={selectedNetwork}
         setSelectedNetwork={setSelectedNetwork}
       />
-      <GraphRenderer graphView={data} setSelectedNode={setSelectedNode} render3d={render3d} />
+      {loading ? (
+        <div className="Loading">Loading Graph......</div>
+      ) : (
+        <GraphRenderer
+          graphView={data}
+          setSelectedNode={setSelectedNode}
+          setSelectedEdge={setSelectedEdge}
+          render3d={render3d}
+        />
+      )}
     </div>
   )
 }

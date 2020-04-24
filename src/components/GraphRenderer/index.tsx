@@ -19,6 +19,7 @@ const INITIAL_VIEW_STATE = {
 
 type RendererProps = {
   setSelectedNode: Function
+  setSelectedEdge: Function
   graphView: GraphView | null
   render3d: boolean
 }
@@ -27,7 +28,7 @@ type RendererProps = {
  * Base component for large graph rendering using Deck.gl
  */
 const GraphRenderer = (props: RendererProps) => {
-  const {setSelectedNode, graphView, render3d} = props
+  const {setSelectedNode, setSelectedEdge, graphView, render3d} = props
 
   // UI states
   const [showEdges, setShowEdges] = useState(true)
@@ -61,7 +62,7 @@ const GraphRenderer = (props: RendererProps) => {
     }
   }
 
-  const layerProps = {graphView, setSelectedNode, showEdges, showLabels, render3d}
+  const layerProps = {graphView, setSelectedNode, setSelectedEdge, showEdges, showLabels, render3d}
   const layers = [new GraphLayer(layerProps)]
   let view = new OrthographicView()
   if (render3d) {

@@ -3,16 +3,14 @@ import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 
 import {createStyles, Theme, makeStyles} from '@material-ui/core/styles'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import Avatar from '@material-ui/core/Avatar'
 
 import NodeView from '../../model/NodeView'
+import EdgeView from '../../model/EdgeView'
 
 import RenderingSwitch from './RenderingSwitch'
 import ExampleSelector from './ExampleSelector'
+import NetworkIDForm from './NetworkIDForm'
+import SelectedObjectPanel from './SelectedObjectPanel'
 
 
 
@@ -40,7 +38,8 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type ControlProps = {
-  selectedNode?: NodeView
+  selectedNode?: NodeView,
+  selectedEdge?: EdgeView,
   setRender3d: Function,
   selectedNetwork: string,
   setSelectedNetwork: Function
@@ -49,18 +48,7 @@ type ControlProps = {
 const ControlPanel = (props: ControlProps) => {
   const classes = useStyles()
 
-  if (props.selectedNode === undefined) {
-    return (
-      <div className={classes.root}>
-        <Typography className={classes.title} variant="h6">
-          Large Graph Renderer Demo
-        </Typography>
-      </div>
-    )
-  }
-  const {label, id} = props.selectedNode
-
-  const {setRender3d} = props
+  const { setRender3d, selectedNode, selectedEdge } = props
 
   console.log('props.', props.selectedNode)
   return (
@@ -71,22 +59,11 @@ const ControlPanel = (props: ControlProps) => {
 
       <Divider />
 
-      <List className={classes.list}>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar className={classes.node}>N</Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={label} secondary={`ID: ${id}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>E</Avatar>
-          </ListItemAvatar>
-          {/* <ListItemText primary="Edge" secondary={`Source: ${source} Target: ${target}`} /> */}
-        </ListItem>
-      </List>
+      <SelectedObjectPanel {...props} />
+
       <Divider />
       <ExampleSelector {...props}/>
+      <NetworkIDForm {...props}/>
       <Divider />
       <RenderingSwitch setRender3d={setRender3d} />
     </div>

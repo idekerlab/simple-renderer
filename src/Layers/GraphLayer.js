@@ -23,10 +23,11 @@ class GraphLayer extends CompositeLayer {
   getPickingInfo(pickingInfo) {
 
     const {mode, info} = pickingInfo
-    const {setSelectedNode} = this.props
+    const {setSelectedNode, setSelectedEdge} = this.props
     if (mode === 'query') {
       console.log('Selection::', pickingInfo)
       setSelectedNode(info.object)
+      setSelectedEdge(info.object)
     }
   }
 
